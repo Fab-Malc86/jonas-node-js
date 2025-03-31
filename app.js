@@ -7,24 +7,16 @@ app.use(express.json())
 
 const tours = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`))
 
-
-
-app.get('/', (req, res) => {
-  res.status(200).send('Hello from server')
-
-
-})
-
-app.get('/api/v1/tours', (req, res) => {
+const getAllTours = (req, res) => {
   res.status(200).json({
     status: 'success',
     data: {
       tours: tours
     }
   })
-})
+}
 
-app.get('/api/v1/tours/:id', (req, res) => {
+const getTour = (req, res) => {
   const id = Number(req.params.id)
 
   if (id > tours.length) {
@@ -42,10 +34,9 @@ app.get('/api/v1/tours/:id', (req, res) => {
       tours: tour
     }
   })
-})
+}
 
-
-app.patch('/api/v1/tours/:id', (req, res) => {
+const updateTour = (req, res) => {
 
   const id = Number(req.params.id)
 
@@ -55,11 +46,6 @@ app.patch('/api/v1/tours/:id', (req, res) => {
       message: "wrong id"
     })
   }
-
-  const tour = tours.find(el => el.id === id)
-
-  tours[id].duration = "sgays"
-  console.log(tours[id].duration);
 
   const tourMod = Object.assign(tours[id], req.body)
   console.log(tourMod);
@@ -78,14 +64,9 @@ app.patch('/api/v1/tours/:id', (req, res) => {
       }
     })
   })
+}
 
-
-
-})
-
-
-
-app.post('/api/v1/tours', (req, res) => {
+const createNewTour = (req, res) => {
   const newId = tours[tours.length - 1].id + 1
 
   const newTour = Object.assign({ id: newId }, req.body)
@@ -105,9 +86,13 @@ app.post('/api/v1/tours', (req, res) => {
       }
     })
   })
+}
 
 
-})
+app.get('/api/v1/tours', getAllTours)
+app.get('/api/v1/tours/:id', getTour)
+app.patch('/api/v1/tours/:id', updateTour)
+app.post('/api/v1/tours', createNewTour)
 
 
 
